@@ -23,6 +23,7 @@ func NewBulb(host string) *ldata {
 
 
 func (b ldata) SetHSB(hue, saturation, brightness int) {
+	On()
 	message := []byte("{\"smartlife.iot.smartbulb.lightingservice\":" +
 		"{\"transition_light_state\":" +
 		"{\"ignore_default\":1," +
@@ -37,6 +38,7 @@ func (b ldata) SetHSB(hue, saturation, brightness int) {
 }
 
 func (b ldata) SetHSBT(hue, saturation, brightness, transition_period int) {
+	On()
 	message := []byte("{\"smartlife.iot.smartbulb.lightingservice\":" +
 		"{\"transition_light_state\":" +
 		"{\"ignore_default\":1," +
