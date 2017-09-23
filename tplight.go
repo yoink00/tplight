@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"bufio"
 	"encoding/json"
-	//"fmt"
 )
 
 type Bulb interface {
@@ -34,7 +33,6 @@ func (b ldata) SetHSB(hue, saturation, brightness int) {
 		"\"brightness\":" + strconv.Itoa(brightness) + "," +
 		"\"color_temp\" : 0" +
 		"}}}")
-	print(string(message))
 	send(b.address, message)
 }
 
@@ -49,7 +47,6 @@ func (b ldata) SetHSBT(hue, saturation, brightness, transition_period int) {
 		"\"brightness\":" + strconv.Itoa(brightness) + "," +
 		"\"color_temp\" : 0" +
 		"}}}")
-	print(string(message))
 	send(b.address, message)
 }
 
@@ -59,7 +56,6 @@ func (b ldata) On() {
 		"{\"ignore_default\":1," +
 		"\"on_off\":1" +
 		"}}}")
-	print(string(message))
 	send(b.address, message)
 }
 
@@ -70,12 +66,11 @@ func (b ldata) Off() {
 		"\"on_off\":0," +
 		"\"transition_period\":2" +
 		"}}}")
-	print(string(message))
 	send(b.address, message)
 }
 
 
-func (b ldata) Info() (*map[string]int) { //(onOff, hue, saturation, brightness int) {
+func (b ldata) Info() (*map[string]int) {
 	info := make(map[string]int)
 	parsed := send(b.address, []byte("{\"system\" : {\"get_sysinfo\": {}}}")[:])
 	data := parsed["system"].(map[string]interface{})["get_sysinfo"].(map[string]interface{})["light_state"].(map[string]interface{})
@@ -84,11 +79,7 @@ func (b ldata) Info() (*map[string]int) { //(onOff, hue, saturation, brightness 
 	info["saturation"] = int(data["saturation"].(float64)) 
 	info["brightness"] = int(data["brightness"].(float64))
 	return &info
-	// onOff = int(data["on_off"].(float64)) 
-	// hue = int(data["hue"].(float64)) 
-	// saturation = int(data["saturation"].(float64)) 
-	// brightness = int(data["brightness"].(float64))
-	// return
+
 }
 
 func encrypt(data []byte) (output []byte) {
@@ -129,7 +120,6 @@ func send(hostname string, message []byte) (parsed map[string]interface{}) {
 		panic(err)
 	}
 	dData := decrypt(rData[:rLen])
-	//print(string(dData), "\n")
 	err = json.Unmarshal(dData, &parsed)
 	if err != nil {
 		panic(err)
