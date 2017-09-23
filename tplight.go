@@ -1,4 +1,4 @@
-package tplight
+package main
 import (
 	"net"
 	"strconv"
@@ -23,7 +23,6 @@ func NewBulb(host string) *ldata {
 
 
 func (b ldata) SetHSB(hue, saturation, brightness int) {
-	On()
 	message := []byte("{\"smartlife.iot.smartbulb.lightingservice\":" +
 		"{\"transition_light_state\":" +
 		"{\"ignore_default\":1," +
@@ -38,7 +37,6 @@ func (b ldata) SetHSB(hue, saturation, brightness int) {
 }
 
 func (b ldata) SetHSBT(hue, saturation, brightness, transition_period int) {
-	On()
 	message := []byte("{\"smartlife.iot.smartbulb.lightingservice\":" +
 		"{\"transition_light_state\":" +
 		"{\"ignore_default\":1," +
@@ -76,10 +74,18 @@ func (b ldata) Info() (*map[string]int) {
 	info := make(map[string]int)
 	parsed := send(b.address, []byte("{\"system\" : {\"get_sysinfo\": {}}}")[:])
 	data := parsed["system"].(map[string]interface{})["get_sysinfo"].(map[string]interface{})["light_state"].(map[string]interface{})
-	info["onOff"] =  int(data["on_off"].(float64)) 
-	info["hue"] = int(data["hue"].(float64)) 
-	info["saturation"] = int(data["saturation"].(float64)) 
-	info["brightness"] = int(data["brightness"].(float64))
+	info["onOff"] =  int(data["on_off"].(float64))
+
+	if info["onOff"] != 1 {
+		info["hue"] = int(data["dft_on_state"].(map[string]interface{})["hue"].(float64)) 
+		info["saturation"] = int(data["dft_on_state"].(map[string]interface{})["saturation"].(float64)) 
+		info["brightness"] = int(data["dft_on_state"].(map[string]interface{})["brightness"].(float64))
+	} else {
+		info["hue"] = int(data["hue"].(float64)) 
+		info["saturation"] = int(data["saturation"].(float64)) 
+		info["brightness"] = int(data["brightness"].(float64))
+	}
+
 	return &info
 
 }
@@ -116,7 +122,7 @@ func send(hostname string, message []byte) (parsed map[string]interface{}) {
 	if err != nil{
 		panic(err)
 	}
-	rData := make([]byte, 1000)
+	rData := make([]byte, 1500)
 	rLen, err := bufio.NewReader(conn).Read(rData)
 	if err != nil {
 		panic(err)
