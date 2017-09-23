@@ -1,4 +1,4 @@
-package main
+package tplight
 import (
 	"net"
 	"strconv"
