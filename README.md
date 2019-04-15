@@ -1,5 +1,5 @@
 # tplight
-Control the TP-LINK LB130 IOT Lightbulb with Golang.\
+Control Tp-LINK IOT Lightbulbs with Golang. Confirmed to work with LB130 and KL130 models.
 
 ## Example
 ```Go
