@@ -1,3 +1,3 @@
-module git.sr.ht/~yoink00/tplight
+module github.com/cullenbass/tplight
 
 go 1.14
